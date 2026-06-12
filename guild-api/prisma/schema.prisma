@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Adventurer {
+  id        String   @id @default(uuid()) 
+  name      String   
+  class     String   
+  element   String   
+  rank      String   
+  bounty    Int      
+  status    String   @default("กำลังสำรวจ") 
+  createdAt DateTime @default(now()) 
+}
+
+model DungeonLog {
+  id           String   @id @default(uuid())
+  adventurerId String   
+  action       String   
+  timestamp    DateTime @default(now()) 
+}
+
