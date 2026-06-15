@@ -1,0 +1,1 @@
+export const guildPrices = { S: 25000, A: 10000, B: 5000, C: 1200, D: 500, F: 150 };

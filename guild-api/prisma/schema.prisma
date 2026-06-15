@@ -4,24 +4,69 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:./dev.db"
 }
 
+// 👤 ตารางนักผจญภัย
 model Adventurer {
-  id        String   @id @default(uuid()) 
-  name      String   
-  class     String   
-  element   String   
-  rank      String   
-  bounty    Int      
-  status    String   @default("กำลังสำรวจ") 
-  createdAt DateTime @default(now()) 
+  id        String   @id @default(uuid())
+  name      String
+  class     String
+  element   String
+  rank      String
+  bounty    Int      @default(0)
+  status    String   @default("กำลังสำรวจ")
+  branch    String   @default("เมืองหลวงแห่งปัญญา") // 👈 ตัวการที่ทำให้เซฟพัง เพราะตารางเก่ายังไม่มีช่องนี้!
+  createdAt DateTime @default(now())
+  recoveredAt DateTime?
 }
 
+// 💰 ตารางคลังสมบัติกิลด์
+model GuildTreasury {
+  id        String   @id @default(uuid())
+  totalGold Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+// 🔮 ตารางบันทึกการลงดันเจี้ยน
 model DungeonLog {
   id           String   @id @default(uuid())
-  adventurerId String   
-  action       String   
-  timestamp    DateTime @default(now()) 
+  adventurerId String
+  action       String
+  timestamp    DateTime @default(now())
 }
 
+// 📜 ตารางกระดานภารกิจ
+model Quest {
+  id          String   @id @default(uuid())
+  title       String
+  difficulty  String   
+  reward      Int
+  item        String?
+  status      String   @default("AVAILABLE") 
+  assignedTo  String?  
+  createdAt   DateTime @default(now())
+  startedAt   DateTime?
+}
+
+// 📦 ตารางคลังแสงกิลด์ (Guild Armory) -> แปะคืนชีพกลับมาด่วนครับ!
+model Inventory {
+  id          String   @id @default(uuid())
+  itemName    String   @unique
+  category    String   @default("ยุทธภัณฑ์")
+  rarity      String   @default("COMMON")
+  quantity    Int      @default(1)
+  description String?
+  icon        String   @default("📦")
+  updatedAt   DateTime @updatedAt
+}
+
+model Ledger {
+  id        String   @id @default(uuid())
+  type      String   // เปลี่ยนจาก TransactionType เป็น String (SQLite รับแค่แบบนี้)
+  amount    Int
+  detail    String
+  timestamp DateTime @default(now()) @map("created_at")
+
+  @@map("ledgers")
+}
